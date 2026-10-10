@@ -1,0 +1,17 @@
+# PromiseWatch settings.
+
+[extraction]
+# The model that reads language (pipeline step 2). Change this one line to
+# switch models.
+model = "claude-haiku-5-5"
+
+# "anthropic" reads the key from the variable named in api_key_env
+# (ANTHROPIC_API_KEY if unset). This environment reserves that name.
+provider = "anthropic"
+api_key_env = "PROMISEWATCH_ANTHROPIC_KEY"
+
+# To use an OpenAI-compatible endpoint instead (for example ILMU), set:
+# provider = "openai_compatible"
+# model = "<the endpoint's model name>"
+# base_url = "https://<endpoint>/v1"
+# api_key_env = "ILMU_API_KEY"

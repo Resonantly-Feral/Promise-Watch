@@ -1,0 +1,24 @@
+# The declared bundle (rule 18). Only the files listed here are read.
+# EXPECTED.md is the answer key: it is never shown to the model.
+
+id = "demo"
+user = "Majlis Events"
+reference_time = "15/10/2026 09:00"  # Malaysia time; never the system clock
+near_window_days = 7
+
+[[chats]]
+file = "chat_cetak_jaya.txt"
+
+[[chats]]
+file = "chat_syarikat_hijau.txt"
+
+[[documents]]
+file = "CJ-Q-0217_quotation.txt"
+issuer = "Cetak Jaya"
+
+[[documents]]
+file = "ME-INV-0311_invoice.txt"
+issuer = "Majlis Events"
+
+[answer_key]
+file = "EXPECTED.md"

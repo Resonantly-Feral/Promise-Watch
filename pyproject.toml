@@ -1,0 +1,15 @@
+[project]
+name = "promisewatch"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["anthropic>=1.13"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+include = ["promisewatch*"]

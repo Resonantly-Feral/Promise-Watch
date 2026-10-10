@@ -1,0 +1,131 @@
+{
+  "provider": "anthropic",
+  "model": "claude-haiku-5-5",
+  "drafts": {
+    "promises": [
+      {
+        "id": "p1",
+        "promisor": "Cetak Jaya",
+        "promisee": "Majlis Events",
+        "outcome_kind": "goods",
+        "description": "300 kraft gift bags with 1-colour logo print",
+        "order_ref": "CJ-2611",
+        "quantity": 300,
+        "deadline": {
+          "date": "13/11/2026",
+          "time": null,
+          "vague_text": null,
+          "question": null,
+          "reasoning": "Source states 'Ready by 13 Nov' with no year. Year 2026 resolved from the bundle reference time (15/10/2026). Quotation CJ-Q-0217 also states Ready date 13/11/2026."
+        },
+        "source_id": "chat_cetak_jaya:2",
+        "supporting_source_ids": [
+          "CJ-Q-0217_quotation:6",
+          "CJ-Q-0217_quotation:10",
+          "CJ-Q-0217_quotation:12",
+          "CJ-Q-0217_quotation:14"
+        ],
+        "conditions": null,
+        "value": {
+          "amount_rm": "8400.00",
+          "payer": "Majlis Events",
+          "payee": "Cetak Jaya",
+          "source_id": "CJ-Q-0217_quotation:12"
+        }
+      },
+      {
+        "id": "p2",
+        "promisor": "Majlis Events",
+        "promisee": "Syarikat Hijau",
+        "outcome_kind": "goods",
+        "description": "300 branded gift bags for Syarikat Hijau product launch",
+        "order_ref": "ME-INV-0311",
+        "quantity": 300,
+        "deadline": {
+          "date": "27/11/2026",
+          "time": null,
+          "vague_text": null,
+          "question": null,
+          "reasoning": "Source states 'Bags ready by 27 Nov' with no year. Year 2026 resolved from the bundle reference time (15/10/2026). Invoice ME-INV-0311 also states Delivery by 27/11/2026."
+        },
+        "source_id": "chat_syarikat_hijau:2",
+        "supporting_source_ids": [
+          "chat_syarikat_hijau:1",
+          "ME-INV-0311_invoice:9",
+          "ME-INV-0311_invoice:13"
+        ],
+        "conditions": null,
+        "value": {
+          "amount_rm": "11000.00",
+          "payer": "Syarikat Hijau",
+          "payee": "Majlis Events",
+          "source_id": "ME-INV-0311_invoice:11"
+        }
+      }
+    ],
+    "statements": [
+      {
+        "kind": "remark",
+        "source_id": "chat_cetak_jaya:7",
+        "about": [
+          "p1"
+        ],
+        "date": null,
+        "name": null,
+        "question": null,
+        "cost": null
+      },
+      {
+        "kind": "date_statement",
+        "source_id": "chat_cetak_jaya:8",
+        "about": [
+          "p1"
+        ],
+        "date": {
+          "date": "28/11/2026",
+          "time": null,
+          "vague_text": null,
+          "question": null,
+          "reasoning": "Proposed date '28 Nov can?' has no year. Year 2026 resolved from the bundle reference time (15/10/2026). Proposed after the 27/11/2026 deadline owed to Syarikat Hijau."
+        },
+        "name": null,
+        "question": null,
+        "cost": null
+      },
+      {
+        "kind": "alternative_offered",
+        "source_id": "chat_cetak_jaya:9",
+        "about": [
+          "p1"
+        ],
+        "date": null,
+        "name": "Cetak Murni",
+        "question": null,
+        "cost": null
+      },
+      {
+        "kind": "instruction_like",
+        "source_id": "chat_cetak_jaya:10",
+        "about": [],
+        "date": null,
+        "name": null,
+        "question": null,
+        "cost": null
+      }
+    ],
+    "evidence": [],
+    "earlier_fulfilments": [],
+    "links": [
+      {
+        "upstream": "p1",
+        "downstream": "p2",
+        "reason": "Majlis Events needs the 300 gift bags from Cetak Jaya (ready 13/11/2026) to deliver the 300 branded gift bags to Syarikat Hijau by 27/11/2026.",
+        "source_ids": [
+          "chat_cetak_jaya:2",
+          "chat_cetak_jaya:3",
+          "chat_syarikat_hijau:2"
+        ]
+      }
+    ]
+  }
+}

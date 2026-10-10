@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PromiseWatch · Scorecard</title>
+<style>
+:root {
+  --bg: #102c27; --panel: #163a32; --panel-2: #1c463c; --rule: #2f5a4e;
+  --ink: #f2f4e9; --soft: #adc3b7; --pale: #cdf194; --on-pale: #14352e;
+  --warm: #ffb78c;
+  --sans: Arial, Helvetica, sans-serif;
+  --serif: Georgia, serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); }
+main { max-width: 780px; margin: 0 auto; padding: 32px 16px 64px; }
+em { font-family: var(--serif); font-style: italic; font-weight: 400; }
+h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.01em; margin: 0; }
+h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.1; margin: 8px 0 12px; }
+h1 em { color: var(--pale); }
+h2 { font-size: 22px; margin: 40px 0 12px; }
+h2 em { color: var(--pale); }
+h3 { font-size: 21px; line-height: 1.25; }
+h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--soft); margin: 20px 0 8px; }
+.brand { font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: var(--pale); margin: 0; }
+.meta { color: var(--soft); font-size: 14px; margin: 0; }
+.confirm { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 14px 0; margin-top: 20px; border-bottom: 1px solid var(--rule); }
+.confirm p { margin: 8px 0 0; color: var(--soft); font-size: 14px; }
+button { font: 700 15px/1.2 var(--sans); border-radius: 999px; padding: 11px 18px; cursor: pointer; }
+#confirm, .confirm button { background: var(--pale); color: var(--on-pale); border: 2px solid var(--pale); }
+#confirm[aria-pressed="true"] { background: transparent; color: var(--pale); }
+.confirm button[disabled] { opacity: .55; cursor: not-allowed; }
+.issues { border: 2px solid var(--warm); border-radius: 14px; padding: 4px 18px 14px; margin-top: 24px; }
+.issues h2 { margin-top: 14px; color: var(--warm); font-size: 19px; }
+.issues.clean { border: 1px solid var(--rule); }
+.issues.clean h2 { color: var(--soft); }
+.issues ul { padding-left: 18px; margin: 8px 0 0; }
+.issues li { margin: 6px 0; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 16px; padding: 20px; margin: 16px 0; }
+.card.lv-HIGH { border: 2px solid var(--warm); }
+.card.lv-MEDIUM { border: 2px solid var(--pale); }
+.eyebrow { color: var(--soft); font-size: 14px; margin: 0 0 6px; }
+.marks { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.status, .level { font-weight: 800; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 5px 12px; }
+.status { border: 1px solid var(--soft); color: var(--ink); }
+.level { background: var(--pale); color: var(--on-pale); }
+.lv-HIGH .level { background: var(--warm); }
+.level.plain { background: transparent; color: var(--soft); text-transform: none; letter-spacing: 0; font-weight: 600; border: 1px solid var(--rule); }
+.calm { color: var(--soft); }
+dl.when { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
+dl.when dt { color: var(--soft); }
+dl.when dd { margin: 0; font-weight: 600; }
+ol.reasons { padding-left: 20px; margin: 0; }
+ol.reasons li { margin: 0 0 14px; }
+ol.reasons p { margin: 0 0 6px; }
+.code { display: inline-block; background: var(--panel-2); border: 1px solid var(--rule); border-radius: 6px; padding: 0 7px; margin-right: 4px; font-size: 13px; }
+blockquote.src { margin: 6px 0; padding: 8px 12px; border-left: 3px solid var(--pale); background: var(--panel-2); border-radius: 0 10px 10px 0; }
+blockquote.src p { margin: 0; font-family: var(--serif); font-style: italic; font-size: 17px; overflow-wrap: anywhere; }
+blockquote.src footer { font-size: 12.5px; color: var(--soft); margin-top: 4px; overflow-wrap: anywhere; }
+.tag { display: inline-block; margin-left: 8px; color: var(--on-pale); background: var(--warm); font-weight: 800; font-style: normal; border-radius: 6px; padding: 0 6px; }
+.ref { margin: 4px 0; font-size: 14px; color: var(--soft); }
+.link.on { color: var(--pale); font-weight: 700; }
+.link.off { color: #8fa79a; }
+.question { font-weight: 800; color: var(--warm); }
+.note, .stop { color: var(--warm); }
+.missing { border-top: 1px dashed var(--rule); margin-top: 18px; }
+.missing ul { margin: 0; padding-left: 18px; }
+.missing p { color: var(--soft); font-size: 14px; margin: 6px 0 0; }
+.flag { border: 1px solid var(--warm); border-radius: 12px; padding: 4px 14px 10px; margin: 10px 0; }
+.options { border-top: 1px solid var(--rule); margin-top: 20px; }
+.option { display: block; width: 100%; text-align: left; margin: 8px 0; background: transparent; color: var(--ink); border: 1px solid var(--soft); border-radius: 12px; }
+.option:hover, .option:focus-visible { border-color: var(--pale); outline: none; }
+.option-note { min-height: 1em; color: var(--pale); font-size: 14px; margin: 4px 0; }
+.nobody { margin: 12px 0 0; }
+.nobody b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--warm); }
+.money { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; margin: 10px 0; }
+.money .amount { font-size: 26px; font-weight: 800; margin: 0; }
+.money .dir { margin: 0; font-weight: 700; color: var(--pale); }
+.money.payable .dir { color: var(--warm); }
+.money .for { margin: 4px 0; color: var(--soft); font-size: 14px; }
+.links .why { color: var(--soft); margin-top: -6px; }
+details { border: 1px solid var(--rule); border-radius: 12px; padding: 8px 14px; margin: 10px 0; }
+summary { font-weight: 800; cursor: pointer; }
+summary span { color: var(--soft); font-weight: 600; font-size: 13px; margin-left: 6px; }
+.line.marked blockquote { border-left-color: var(--warm); }
+.end { margin-top: 48px; color: var(--soft); border-top: 1px solid var(--rule); padding-top: 16px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+<style>
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-top: 1px solid var(--rule); }
+th { color: var(--soft); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.mark { font-weight: 800; font-size: 18px; }
+.m-R, .m-F { color: var(--pale); } .m-W, .m-X { color: var(--warm); }
+.big { font-size: 26px; font-weight: 800; margin: 6px 0; }
+.dim { color: var(--soft); font-size: 13px; }
+.run { background: var(--panel); border: 1px solid var(--rule); border-radius: 16px; padding: 18px; margin: 16px 0; overflow-x: auto; }
+.brand a { text-decoration: none; color: inherit; }
+a { color: var(--pale); }
+@media (max-width: 600px) { .p1 th:nth-child(2), .p1 td:nth-child(2) { display: none; } }
+</style><header class="top"><p class="brand"><a href="index.html">PromiseWatch</a></p><h1>Scorecard, <em>every case counted.</em></h1><p class="meta">Computed by <code>python -m promisewatch.site</code> from the tests and the saved runs. Reference time Thursday 15/10/2026, 09:00 Malaysia time.</p></header><section class="legend"><h2>Marks</h2><dl class="when"><dt>R</dt><dd>right</dd><dt>F</dt><dd>flagged correctly: the right answer is a stop or a flag, and the engine gave it</dd><dt>W</dt><dd>wrong, with the specific error flagged</dd><dt>X</dt><dd>wrong, with no relevant flag</dd></dl></section><section><h2>Pass 1, <em>rules only</em></h2><p class="big">R 22 · F 3 · W 0 · X 0 · of 25</p><p>Hand-written records for each test-set case go straight to the rules engine. A case passes when its test asserts the complete expected result. Passed cases are marked F when every record in the case stopped (rule 17) or the case has flags only, and R otherwise. A failed case would need a person to mark it W or X.</p><table class="p1"><thead><tr><th>Case</th><th>Test</th><th>Mark</th><th>Engine result</th></tr></thead><tbody><tr><td><b>P01</b></td><td>clean far away<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P02</b></td><td>kept near with dependent<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Kept, Kept<br>customer: Open, stopped: By when was this promised?<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P03</b></td><td>claim on channel that sends proof<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, MEDIUM<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P04</b></td><td>claim on channel that never sends proof<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P05</b></td><td>owner says its fine<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, MEDIUM<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P06</b></td><td>missing proof with dependent<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, HIGH<br>customer: Open, stopped: By when was this promised?<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P07</b></td><td>near with dependent no other signal<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, MEDIUM<br>customer: Open, stopped: By when was this promised?<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P08</b></td><td>revised still in time<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Revised (proposed), MEDIUM<br>customer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P09</b></td><td>revised past customer deadline<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Revised (proposed), HIGH<br>customer: Open, HIGH<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P10</b></td><td>link only proposed<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Revised (proposed), MEDIUM<br>customer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P11</b></td><td>third party says late<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, MEDIUM<br><span class="dim">flags: conflict, missing by channel</span></td></tr><tr><td><b>P12</b></td><td>deadline passed<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Overdue unverified, HIGH<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P13</b></td><td>refusal before deadline<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Broken, Confirmed failure<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P14</b></td><td>vague date stops<br><span class="dim">passed</span></td><td class="mark m-F">F</td><td>payment: Open, stopped: Which Raya?<br><span class="dim">flags: missing by channel, unresolved date</span></td></tr><tr><td><b>P15</b></td><td>cannot tell which order<br><span class="dim">passed</span></td><td class="mark m-F">F</td><td>bags: Open, stopped: Which order is late?<br>banners: Open, stopped: Which order is late?<br><span class="dim">flags: ambiguous reference, missing by channel</span></td></tr><tr><td><b>P16</b></td><td>points outside bundle<br><span class="dim">passed</span></td><td class="mark m-F">F</td><td><i>no promise record</i><br><span class="dim">flags: outside bundle</span></td></tr><tr><td><b>P17</b></td><td>planted instruction<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>payment: Open, No elevated risk detected in this bundle<br><span class="dim">flags: anomaly, missing by channel</span></td></tr><tr><td><b>P17b</b></td><td>polite claim of payment<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>payment: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P18</b></td><td>options without invented costs<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Revised (proposed), HIGH<br>customer: Open, HIGH<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P19</b></td><td>amount direction no total<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Revised (proposed), HIGH<br>customer: Open, HIGH<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P20</b></td><td>confirmed failure reaches dependent<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Broken, Confirmed failure<br>customer: Open, HIGH<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P21</b></td><td>explicit fulfilment dispute<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Disputed, MEDIUM<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P22</b></td><td>proof belongs to another order<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: evidence mismatch, missing by channel</span></td></tr><tr><td><b>P23</b></td><td>tracking is not delivery<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Open, No elevated risk detected in this bundle<br><span class="dim">flags: missing by channel</span></td></tr><tr><td><b>P24</b></td><td>proposal cannot erase overdue<br><span class="dim">passed</span></td><td class="mark m-R">R</td><td>printer: Overdue unverified, HIGH<br><span class="dim">flags: missing by channel</span></td></tr></tbody></table></section><section><h2>Pass 2, <em>full pipeline</em></h2><p>The demo bundle, raw messages and documents to the whole system, once per saved run. Each run was made once and kept; none was re-rolled. A case is R when every check that names it passes. Otherwise it is W if validation issues are shown next to the warnings, and X if nothing flags the error.</p><div class="run"><h3>Run 001 <span class="dim">· claude-haiku-5-5</span></h3><p class="big">R 0 · F 0 · W 2 · X 0 · of 2</p><p>22 of 25 checks pass · first divergence: <b>Extract</b> · <a href="demo/claude-haiku-5-5-001.html">open the demo page</a></p><table><thead><tr><th>Stage</th><th>Checks</th><th>Failed</th></tr></thead><tbody><tr><td>Capture</td><td>3 / 3</td><td></td></tr><tr><td>Extract</td><td>19 / 20</td><td>customer: 300 and 27/11 are written in its cited lines (rule 8)<br><span class="dim">chat_syarikat_hijau:2, ME-INV-0311_invoice:13, chat_syarikat_hijau:3</span></td></tr><tr><td>Validate</td><td>0 / 2</td><td>no validation issues<br><span class="dim">promise p2: quantity 300 is not in its sources (rule 8); link 1: links p1 -&gt; p2, not both in the bundle</span><br>both promises reach the rules<br><span class="dim"></span></td></tr><tr><td>Link</td><td><span class="dim">not reached</span></td><td></td></tr><tr><td>Score (before)</td><td><span class="dim">not reached</span></td><td></td></tr><tr><td>Score (after)</td><td><span class="dim">not reached</span></td><td></td></tr><tr><td>Show</td><td><span class="dim">not reached</span></td><td></td></tr></tbody></table><p>printer: <b class="m-W">W</b> · customer: <b class="m-W">W</b></p><p class="dim">Validation issues shown on the page: promise p2: quantity 300 is not in its sources (rule 8); link 1: links p1 -&gt; p2, not both in the bundle</p></div><div class="run"><h3>Run 002 <span class="dim">· claude-haiku-5-5</span></h3><p class="big">R 2 · F 0 · W 0 · X 0 · of 2</p><p>39 of 39 checks pass · <a href="demo/claude-haiku-5-5-002.html">open the demo page</a></p><table><thead><tr><th>Stage</th><th>Checks</th><th>Failed</th></tr></thead><tbody><tr><td>Capture</td><td>3 / 3</td><td></td></tr><tr><td>Extract</td><td>20 / 20</td><td></td></tr><tr><td>Validate</td><td>1 / 1</td><td></td></tr><tr><td>Link</td><td>1 / 1</td><td></td></tr><tr><td>Score (before)</td><td>6 / 6</td><td></td></tr><tr><td>Score (after)</td><td>5 / 5</td><td></td></tr><tr><td>Show</td><td>3 / 3</td><td></td></tr></tbody></table><p>printer: <b class="m-R">R</b> · customer: <b class="m-R">R</b></p></div></section><footer class="end"><p><a href="index.html">Back to the front page</a></p></footer>
+</main>
+<script>
+(function () {
+  var b = document.getElementById("confirm");
+  if (b) b.addEventListener("click", function () {
+    var on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.textContent = on ? b.dataset.on : b.dataset.off;
+    document.querySelectorAll(".state").forEach(function (s) {
+      s.hidden = s.dataset.state !== (on ? "after" : "before");
+    });
+    document.getElementById("confirm-note").innerHTML = on
+      ? "Showing the result <em>after</em> a human confirms the proposed link. Both results were computed by the rules engine."
+      : "Showing the result <em>before</em> a human confirms the proposed link. Both results were computed by the rules engine.";
+  });
+  document.querySelectorAll(".option").forEach(function (o) {
+    o.addEventListener("click", function () {
+      o.parentNode.querySelector(".option-note").textContent =
+        "Nothing was sent or changed. PromiseWatch only shows options; the decision and the action are yours.";
+    });
+  });
+})();
+</script>
+</body>
+</html>
