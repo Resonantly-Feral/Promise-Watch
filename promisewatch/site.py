@@ -151,7 +151,8 @@ def scorecard(p1: list[dict], p2: list[dict]) -> str:
            "<dt>X</dt><dd>wrong, with no relevant flag</dd></dl></section>"]
 
     out.append(f'<section><h2>Pass 1, <em>rules only</em></h2><p class="big">{e(counts(r["mark"] for r in p1))}</p>'
-               "<p>Hand-written records for each test-set case go straight to the rules engine. "
+               "<p><b>These 25 are rules-only.</b> No AI is involved: hand-written records for each "
+               "test-set case go straight to the rules engine. "
                "A case passes when its test asserts the complete expected result. "
                "Passed cases are marked F when every record in the case stopped (rule 17) "
                "or the case has flags only, and R otherwise. A failed case would need a "
@@ -167,7 +168,8 @@ def scorecard(p1: list[dict], p2: list[dict]) -> str:
     out.append("</tbody></table></section>")
 
     out.append('<section><h2>Pass 2, <em>full pipeline</em></h2>'
-               "<p>The demo bundle, raw messages and documents to the whole system, once per saved run. "
+               "<p><b>One bundle, two runs.</b> The demo bundle's raw messages and documents go through "
+               "the whole system, AI included, once per saved run. "
                "Each run was made once and kept; none was re-rolled. A case is R when every "
                "check that names it passes. Otherwise it is W if a validation issue shown next to "
                "the warnings names that case's own promise or its link, and X if none does.</p>")

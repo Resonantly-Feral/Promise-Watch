@@ -217,7 +217,7 @@ class Page:
     def issues(self, built: Built) -> str:
         if not built.issues:
             return ('<section class="issues clean"><h2>Validation</h2>'
-                    "<p>No validation issues. Every draft record was found in its sources.</p></section>")
+                    "<p>No validation issues. Every date and figure was found in the line it cites.</p></section>")
         items = "".join(f"<li><b>{e(i.item)}</b> · {e(i.check)}<br>{e(i.text)}</li>"
                         for i in built.issues)
         n = len(built.issues)
