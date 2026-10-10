@@ -27,7 +27,7 @@ import pytest
 from promisewatch.page import TEMPLATE, e, render
 from promisewatch.pipeline.build import build
 from promisewatch.pipeline.capture import capture
-from promisewatch.pipeline.compare import STAGES, compare, first_divergence
+from promisewatch.pipeline.compare import CJ, ME, SH, STAGES, compare, first_divergence
 from promisewatch.rules import evaluate
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,7 +35,8 @@ DOCS = ROOT / "docs"
 RUNS = ROOT / "data" / "runs"
 BUNDLE = ROOT / "data" / "bundle.toml"
 PASS1 = ROOT / "tests" / "test_pass1_rules.py"
-CASES = ("printer", "customer")  # the demo bundle's two expected promises
+# The demo bundle's two expected promises: promisor and promisee.
+CASES = {"printer": (CJ, ME), "customer": (ME, SH)}
 
 
 # ------------------------------------------------------------------ Pass 1
@@ -96,10 +97,11 @@ def pass2(run: Path) -> dict:
     by_name = {c.name: c for c in checks}
     issues = build(cap, drafts).issues
     marks = {}
-    for case in CASES:
+    for case, parties in CASES.items():
         names = [n for n in reference if case in n]
         ok = all(n in by_name and by_name[n].ok for n in names)
-        marks[case] = "R" if ok else ("W" if issues else "X")
+        own = own_issues(drafts, issues, parties)
+        marks[case] = "R" if ok else ("W" if own else "X")
     stages = []
     for stage in STAGES:
         mine = [c for c in checks if c.stage == stage]
@@ -109,6 +111,18 @@ def pass2(run: Path) -> dict:
                 marks=marks, divergence=first_divergence(checks),
                 passed=sum(c.ok for c in checks), total=len(checks),
                 issues=[f"{i.item}: {i.text}" for i in issues])
+
+
+def own_issues(drafts: dict, issues, parties: tuple[str, str]) -> list:
+    """Validation issues that name this case's own promise, or a link to or
+    from it. Only these make a wrong case W; any other issue leaves it X."""
+    pids = {p["id"] for p in drafts.get("promises", [])
+            if (p["promisor"], p["promisee"]) == parties}
+    items = {f"promise {pid}" for pid in pids}
+    for n, l in enumerate(drafts.get("links", []), 1):
+        if l["upstream"] in pids or l["downstream"] in pids:
+            items.add(f"link {n}")
+    return [i for i in issues if i.item in items]
 
 
 def _reference_drafts() -> dict:
@@ -155,8 +169,8 @@ def scorecard(p1: list[dict], p2: list[dict]) -> str:
     out.append('<section><h2>Pass 2, <em>full pipeline</em></h2>'
                "<p>The demo bundle, raw messages and documents to the whole system, once per saved run. "
                "Each run was made once and kept; none was re-rolled. A case is R when every "
-               "check that names it passes. Otherwise it is W if validation issues are shown "
-               "next to the warnings, and X if nothing flags the error.</p>")
+               "check that names it passes. Otherwise it is W if a validation issue shown next to "
+               "the warnings names that case's own promise or its link, and X if none does.</p>")
     for r in p2:
         out.append(f'<div class="run"><h3>Run {e(r["run"][-3:])} <span class="dim">· {e(r["model"])}</span></h3>'
                    f'<p class="big">{e(counts(r["marks"].values()))}</p>'
